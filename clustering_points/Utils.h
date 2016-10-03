@@ -12,6 +12,6 @@ public:
 	~Utils();
 
 	static Config createConfigFromFile(std::string filename);
-	static std::vector<MovingPoint> getMovingPointsFromFile(std::string filename);
+	static std::vector<Point*> getMovingPointsFromFile(std::string filename);
 };
 

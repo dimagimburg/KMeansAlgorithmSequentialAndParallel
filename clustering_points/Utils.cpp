@@ -46,7 +46,7 @@ Config Utils::createConfigFromFile(std::string filename){
 	return Config(total_points, n_clusters, delta_t, time, limit);
 }
 
-vector<MovingPoint> Utils::getMovingPointsFromFile(std::string filename){
+vector<Point*> Utils::getMovingPointsFromFile(std::string filename){
 	enum {
 		POINT_ID,
 		POINT_X,
@@ -56,7 +56,7 @@ vector<MovingPoint> Utils::getMovingPointsFromFile(std::string filename){
 	int id;
 	double x, y, r;
 
-	vector<MovingPoint> points;
+	vector<Point*> points;
 
 	ifstream file(filename);
 	string point_line;
@@ -72,9 +72,7 @@ vector<MovingPoint> Utils::getMovingPointsFromFile(std::string filename){
 		y = stod(point_tokens.at(POINT_Y));
 		r = stod(point_tokens.at(POINT_RADIUS));
 
-		MovingPoint p(x, y, r);
-
-		points.push_back(p);
+		points.push_back(new MovingPoint(x, y, r));
 	}
 
 	return points;

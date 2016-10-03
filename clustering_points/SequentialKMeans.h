@@ -9,13 +9,13 @@ class SequentialKMeans
 {
 public:
 	Config config;
-	std::vector<MovingPoint>* points;
+	std::vector<Point*>* points;
 
-	SequentialKMeans(Config config, std::vector<MovingPoint>* points);
+	SequentialKMeans(Config config, vector<Point*>* points);
 	~SequentialKMeans();
 
-	std::vector<Cluster> getClusters(double current_time);
+	std::vector<Cluster*> getClusters(double current_time);
 
-	void initialize_clusters_vector(vector<Cluster>& clusters);
+	void initialize_clusters_vector(vector<Cluster*>& clusters);
 };
 
