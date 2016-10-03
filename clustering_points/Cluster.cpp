@@ -32,7 +32,7 @@ void Cluster::setCenter(Point* p){
 	this->center = p;
 }
 
-Point* Cluster::getCenter(){
+const Point* Cluster::getCenter() const{
 	return this->center;
 }
 
@@ -51,10 +51,31 @@ void Cluster::recenter(){
 	center = new_center;
 }
 
-bool Cluster::operator==(const Cluster& other) const{
-	Point new_center;
+const int Cluster::size() const {
+	return this->points.size();
+}
+
+bool Cluster::operator==(const Cluster& other) const {
 	vector<Point*>::const_iterator itr = points.begin();
 	vector<Point*>::const_iterator itrEnd = points.end();
 
-	return false;
+	if (other.size() != this->size() || !(*(other.getCenter()) == *(this->getCenter()))){
+		return false;
+	}
+
+	for (; itr != itrEnd; ++itr)
+	{
+		bool found = false;
+		vector<Point*>::const_iterator other_itr = other.points.begin();
+		vector<Point*>::const_iterator other_itrEnd = other.points.end();
+		for (; other_itr != other_itrEnd; ++other_itr){
+			if ((*(*itr)) == (*(*other_itr))){
+				found = true;
+				break;
+			}
+		}
+		if (!found) return false;
+	}
+
+	return true;
 }

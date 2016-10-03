@@ -16,9 +16,10 @@ int main()
 	SequentialKMeans s_kmeans(config, &points);
 	vector<Cluster*> clusters = s_kmeans.getClusters(0);
 
-	cout << *(clusters.at(0)) << endl;
-	cout << *(clusters.at(1)) << endl;
-	cout << *(clusters.at(2)) << endl;
+	//cout << *(clusters.at(0)) << endl;
+	//cout << (*(clusters.at(0)) == *(clusters.at(0))) << endl;
+	//cout << *(clusters.at(1)) << endl;
+	//cout << *(clusters.at(2)) << endl;
 
 
 	/*

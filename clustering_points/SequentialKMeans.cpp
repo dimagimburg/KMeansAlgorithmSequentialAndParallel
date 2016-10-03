@@ -23,7 +23,6 @@ vector<Cluster*> SequentialKMeans::getClusters(double current_time){
 		double min_distance = (*points).at(i)->getDistanceFrom(*(min_distance_cluster->getCenter()));
 		for (int j = 0; j < config.getNumberOfClusters(); j++){			
 			double new_distance = (*points).at(i)->getDistanceFrom(*(clusters.at(j)->getCenter()));
-			cout << "the distance between point " << i << " and cluster number " << j << " is " << new_distance << endl;
 			if (new_distance < min_distance){
 				min_distance_cluster = clusters.at(j);
 				min_distance = new_distance;

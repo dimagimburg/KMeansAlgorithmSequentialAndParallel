@@ -22,7 +22,8 @@ public:
 	void addPoint(Point* p);
 	void clear();
 	void setCenter(Point* p);
-	Point* getCenter();
+	const Point* getCenter() const;
+	const int size() const;
 
 	bool operator==(const Cluster& other) const;
 
