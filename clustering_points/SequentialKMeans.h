@@ -7,6 +7,9 @@
 
 class SequentialKMeans
 {
+private:
+	void initialize_clusters_vector(vector<Cluster*>& clusters);
+
 public:
 	Config config;
 	std::vector<Point*>* points;
@@ -15,7 +18,5 @@ public:
 	~SequentialKMeans();
 
 	std::vector<Cluster*> getClusters(double current_time);
-
-	void initialize_clusters_vector(vector<Cluster*>& clusters);
 };
 

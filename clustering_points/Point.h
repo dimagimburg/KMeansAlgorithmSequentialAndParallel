@@ -16,11 +16,15 @@ public:
 	void setX(double x);
 	void setY(double y);
 
+	const double getDistanceFrom(const Point& p);
+
 	virtual bool operator==(const Point& other) const;
+	virtual void toOs(std::ostream& os) const {};
 
 	friend std::ostream& operator<<(std::ostream& os, const Point& p)
 	{
 		os << "x: " << p.x << ", y: " << p.y;
+		p.toOs(os);
 		return os;
 	}
 };

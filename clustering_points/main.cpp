@@ -13,6 +13,26 @@ int main()
 	Config config = Utils::createConfigFromFile("input.txt");
 	vector<Point*> points = Utils::getMovingPointsFromFile("input.txt");
 
+	SequentialKMeans s_kmeans(config, &points);
+	vector<Cluster*> clusters = s_kmeans.getClusters(0);
+
+	cout << *(clusters.at(0)) << endl;
+	cout << *(clusters.at(1)) << endl;
+	cout << *(clusters.at(2)) << endl;
+
+
+	/*
+	Point* p = new MovingPoint(1,1,2.1);
+	Point* p2 = new Point(2,2);
+
+	cout << *p << endl;
+
+	Cluster* c = new Cluster(p);
+	(*c).addPoint(p2);
+	(*c).recenter();
+
+	cout << *c << endl;
+	*/
 	//cout << config << "\n";
 
 	//cout << points.at(0) << endl;
@@ -28,8 +48,10 @@ int main()
 
 	//cout << (points.at(9) == points.at(10)) << endl;
 
-	SequentialKMeans s_kmeans(config, &points);
-	vector<Cluster*> clusters = s_kmeans.getClusters(0);
+	//SequentialKMeans s_kmeans(config, &points);
+	//vector<Cluster*> clusters = s_kmeans.getClusters(0);
 
-	cout << *(clusters.at(0)) << endl;
+	//cout << *(clusters.at(0)) << endl;
+	//cout << *(clusters.at(1)) << endl;
+	//cout << *(clusters.at(2)) << endl;
 }

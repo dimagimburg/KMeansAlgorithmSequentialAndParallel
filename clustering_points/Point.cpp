@@ -1,4 +1,6 @@
+#include <math.h>
 #include "Point.h"
+
 
 Point::Point(double x, double y) : x(x), y(y)
 {
@@ -31,4 +33,8 @@ void Point::setY(double y){
 
 bool Point::operator==(const Point& other) const {
 	return (other.getX() == this->getX()) && (other.getY() == this->getY());
+}
+
+const double Point::getDistanceFrom(const Point& p){
+	return sqrt(pow(p.getX() - getX(), 2) + pow(p.getY() - getY(), 2));
 }

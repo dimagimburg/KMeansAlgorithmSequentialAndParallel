@@ -23,10 +23,8 @@ public:
 
 	virtual bool operator==(const Point& other) const;
 
-	friend ostream &operator<<(ostream& os, const MovingPoint& p){
-		const Point& point = p;
-		os << "[" << p.id << "] [moving point] " << point << ", radius: " << p.radius;
-		return os;
+	virtual void toOs(ostream& os) const {
+		os << ", radius: " << radius;
 	}
 };
 

@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include "Point.h"
+#include "MovingPoint.h"
 using namespace std;
 
 class Cluster
@@ -9,7 +10,7 @@ class Cluster
 private:
 	static int NEXT_ID;
 	const int id;
-	Point center;
+	Point* center;
 	vector<Point*> points;
 
 public:
@@ -20,8 +21,8 @@ public:
 	void recenter();
 	void addPoint(Point* p);
 	void clear();
-	void setCenter(Point p);
-	Point getCenter();
+	void setCenter(Point* p);
+	Point* getCenter();
 
 	bool operator==(const Cluster& other) const;
 
@@ -29,7 +30,7 @@ public:
 	{
 		os << "=========================" << endl;
 		os << "Cluster : " << c.id << endl;
-		os << "center : " << c.center << endl;
+		os << "center : " << *(c.center) << endl;
 		os << "-------------------------" << endl;
 		vector<Point*>::const_iterator  itr = c.points.begin();
 		vector<Point*>::const_iterator  itrEnd = c.points.end();
