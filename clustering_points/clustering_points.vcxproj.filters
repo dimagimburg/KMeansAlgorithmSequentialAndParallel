@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CudaCompile Include="kernel.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cluster.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingPoint.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Clusterable.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SequentialKMeans.h">
+      <Filter>Alg</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Point.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Cluster.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MovingPoint.cpp">
+      <Filter>Models\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SequentialKMeans.cpp">
+      <Filter>Alg</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Models">
+      <UniqueIdentifier>{c6e84fa3-2542-4fcc-bae5-fd6b6c49453c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Headers">
+      <UniqueIdentifier>{bf26a344-6ffe-420e-98b0-e424a0a073c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Source">
+      <UniqueIdentifier>{1a5545a4-bd32-4b0c-ac4f-f5b905fe8dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExternalFiles">
+      <UniqueIdentifier>{4d45b99b-a83d-4c06-9e42-8872c0cdc95e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{64c69ed9-0b99-44c3-a4e8-5e5766fb02e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{135bc5d0-3a92-47d7-82f7-f59c8065b502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Alg">
+      <UniqueIdentifier>{97da6a76-7baf-49ad-85e9-d9b4493edd75}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt">
+      <Filter>ExternalFiles</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
