@@ -16,6 +16,7 @@ private:
 public:
 	Cluster();
 	Cluster(Point* p);
+	Cluster(const Point* p);
 	~Cluster();
 
 	void recenter();
@@ -23,7 +24,8 @@ public:
 	void clear();
 	void setCenter(Point* p);
 	const Point* getCenter() const;
-	const int size() const;
+	vector<Point*>* getPoints();
+	const size_t size() const;
 
 	bool operator==(const Cluster& other) const;
 

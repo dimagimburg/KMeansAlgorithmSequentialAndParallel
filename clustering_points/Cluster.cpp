@@ -10,7 +10,13 @@ Cluster::Cluster() : id(NEXT_ID++)
 Cluster::Cluster(Point* p) : id(NEXT_ID++)
 {
 	center = new Point(*p);
-	this->addPoint(p);
+	//this->addPoint(p);
+}
+
+Cluster::Cluster(const Point* p) : id(NEXT_ID++)
+{
+	center = new Point(*p);
+	//this->addPoint(p);
 }
 
 Cluster::~Cluster()
@@ -18,7 +24,7 @@ Cluster::~Cluster()
 }
 
 void Cluster::addPoint(Point* p){
-	if (points.size() == 0){
+	if (points.size() == 0 || center == NULL){
 		center = p;
 	}
 	this->points.push_back(p);
@@ -36,6 +42,10 @@ const Point* Cluster::getCenter() const{
 	return this->center;
 }
 
+vector<Point*>* Cluster::getPoints(){
+	return &this->points;
+}
+
 void Cluster::recenter(){
 	double x = 0, y = 0;
 	Point* new_center = new Point();
@@ -51,7 +61,7 @@ void Cluster::recenter(){
 	center = new_center;
 }
 
-const int Cluster::size() const {
+const size_t Cluster::size() const {
 	return this->points.size();
 }
 
