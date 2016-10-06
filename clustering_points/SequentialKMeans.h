@@ -8,12 +8,11 @@
 class SequentialKMeans
 {
 private:
-	void initialize_clusters_vector(vector<Cluster*>& clusters);
-	void k_means_iteration(vector<Cluster*>& clusters);
-	bool cluster_vectors_equal(vector<Cluster*>& previous, vector<Cluster*>& current);
-	void clear_clusters_vector(vector<Cluster*>& to_clear);
-	void copy_cluster_vector(vector<Cluster*>& from, vector<Cluster*>& to);
-	void clear_points_vector(vector<Point*>& to_clear);
+	void initialize_clusters_vector(vector<Cluster>& clusters);
+	void k_means_iteration(vector<Cluster>& clusters);
+	void copy_cluster_vector(vector<Cluster>& from, vector<Cluster>& to);
+	void clear_clusters_vector(vector<Cluster>& to_clear);
+	void clear_points_vector_for_cluster(Cluster& to_clear);
 
 public:
 	Config config;
@@ -22,6 +21,6 @@ public:
 	SequentialKMeans(Config config, vector<Point*>* points);
 	~SequentialKMeans();
 
-	std::vector<Cluster*> getClusters(double current_time);
+	std::vector<Cluster> getClusters(double current_time);
 };
 

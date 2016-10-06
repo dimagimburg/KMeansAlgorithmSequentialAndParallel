@@ -24,7 +24,7 @@ Cluster::~Cluster()
 }
 
 void Cluster::addPoint(Point* p){
-	if (points.size() == 0 || center == NULL){
+	if (points.size() == 0 && center == NULL){
 		center = p;
 	}
 	this->points.push_back(p);

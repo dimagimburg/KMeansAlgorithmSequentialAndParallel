@@ -36,5 +36,5 @@ bool Point::operator==(const Point& other) const {
 }
 
 const double Point::getDistanceFrom(const Point& p){
-	return sqrt(pow(p.getX() - getX(), 2) + pow(p.getY() - getY(), 2));
+	return sqrt(pow(p.getX() - x, 2) + pow(p.getY() - y, 2));
 }

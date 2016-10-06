@@ -9,7 +9,7 @@ private:
 public:
 	Point(double x = 0.0, double y = 0.0);
 	Point(const Point& other);
-	~Point();
+	virtual ~Point();
 
 	const double getX() const;
 	const double getY() const;
