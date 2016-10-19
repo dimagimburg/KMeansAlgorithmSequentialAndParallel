@@ -1,0 +1,22 @@
+# KMeans Clusters Finding Algorithm Sequential And Parallel
+
+Parallel and sequential implementation of cluster finding algorithm based on KMeans, parallel is implemented with CUDA and OpenMP, communication is done with MPI (mpich1.4.1p)
+
+*impleneted for points [(x,y) plane], each point is moving in circle around its center*
+
+Given input is:
+
+1. **N** - number of points (a, b, radius)
+2. **K** - number of clusters wanted
+2. **delta_t** - the time step between calculation of centers of the clusters
+3. **T** - time interval
+4. **LIMIT** - the max number of iterations fo KMeans alg.
+
+![Point p moves](https://s18.postimg.org/jdsa8btah/2016_10_19_1119.png)
+
+input is delivered from file looks like:
+
+**line 1:** N K delta_t T LIMIT
+
+**line 2 - line N:** point_index x y radius
+
