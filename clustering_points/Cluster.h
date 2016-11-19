@@ -37,9 +37,12 @@ public:
 		os << "-------------------------" << endl;
 		vector<Point*>::const_iterator  itr = c.points.begin();
 		vector<Point*>::const_iterator  itrEnd = c.points.end();
+		// TODO: make below depend on variable
+		// UNCOMMENT BELOW TO SEE THE POINTS IN THE CLUSTER
+		/*
 		for (; itr != itrEnd; ++itr)
 			os << "point: " << *(*itr) << endl;
-
+		*/
 		os << "=========================" << endl;
 		return os;
 	}

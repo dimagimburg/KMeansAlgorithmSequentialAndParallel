@@ -74,5 +74,13 @@
     <Text Include="input.txt">
       <Filter>ExternalFiles</Filter>
     </Text>
+    <Text Include="test2.txt">
+      <Filter>ExternalFiles</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="create_input.py">
+      <Filter>ExternalFiles</Filter>
+    </None>
   </ItemGroup>
 </Project>

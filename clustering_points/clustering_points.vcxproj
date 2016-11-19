@@ -173,6 +173,10 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />
+    <Text Include="test2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="create_input.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

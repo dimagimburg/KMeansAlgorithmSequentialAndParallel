@@ -14,8 +14,8 @@ using namespace std;
 
 int main()
 {
-	Config config = Utils::createConfigFromFile("input.txt");
-	vector<Point*> points = Utils::getMovingPointsFromFile("input.txt");
+	Config config = Utils::createConfigFromFile("test2.txt");
+	vector<Point*> points = Utils::getMovingPointsFromFile("test2.txt");
 
 	SequentialKMeans s_kmeans(config, &points);
 	vector<Cluster> clusters = s_kmeans.getClusters(0);
@@ -24,5 +24,6 @@ int main()
 	cout << clusters.at(0) << endl;
 	cout << clusters.at(1) << endl;
 	cout << clusters.at(2) << endl;
+	cout << clusters.at(3) << endl;
 
 }
