@@ -2,6 +2,11 @@
 
 Parallel and sequential implementation of cluster finding algorithm based on KMeans, parallel is implemented with CUDA and OpenMP, communication is done with MPI (mpich1.4.1p)
 
+## Instalation:
+1. (if you use visual studio) link the MPICH library follow those instructions: http://nick-goodman.blogspot.co.il/2012/02/using-mpich-from-ms-visual-studio-2010.html
+
+## The problem world:
+
 *impleneted for points [(x,y) plane], each point is moving in circle around its center*
 
 Given input is:

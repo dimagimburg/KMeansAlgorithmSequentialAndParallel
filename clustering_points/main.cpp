@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mpi.h>
 #include "Point.h"
 #include "MovingPoint.h"
 #include "Cluster.h"
@@ -9,12 +10,15 @@
 using namespace std;
 
 // TODO's
-// 1. implement hard copy constructor for clusters - done [delete next commit]
-// 2. implement point movment in circle based on radius
-
+// 1. implement point movment in circle based on radius
 int main()
 {
 	Config config = Utils::createConfigFromFile("test2.txt");
+	ENCODED_MOVING_POINT* emp_vector = Utils::getEncodeMovingPointsFromFile("test2.txt");
+
+
+
+	/*
 	vector<Point*> points = Utils::getMovingPointsFromFile("test2.txt");
 
 	SequentialKMeans s_kmeans(config, &points);
@@ -25,5 +29,6 @@ int main()
 	cout << clusters.at(1) << endl;
 	cout << clusters.at(2) << endl;
 	cout << clusters.at(3) << endl;
+	*/
 
 }

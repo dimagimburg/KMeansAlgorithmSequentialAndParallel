@@ -53,7 +53,6 @@ vector<Point*> Utils::getMovingPointsFromFile(std::string filename){
 		POINT_Y,
 		POINT_RADIUS
 	};
-	int id;
 	double x, y, r;
 
 	vector<Point*> points;
@@ -76,4 +75,38 @@ vector<Point*> Utils::getMovingPointsFromFile(std::string filename){
 	}
 
 	return points;
+}
+
+ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(std::string filename){
+	enum {
+		POINT_ID,
+		POINT_X,
+		POINT_Y,
+		POINT_RADIUS
+	};
+
+	Config config = createConfigFromFile(filename);
+
+	ENCODED_MOVING_POINT* emp_vector = (ENCODED_MOVING_POINT*) malloc(config.getTotalPoints() * sizeof(ENCODED_MOVING_POINT));
+
+	ifstream file(filename);
+	string point_line;
+
+	getline(file, point_line); // first line is for config
+
+	while (getline(file, point_line)){
+		vector<string> point_tokens;
+		istringstream iss(point_line);
+		copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(point_tokens));
+
+		ENCODED_MOVING_POINT this_emp;
+		this_emp.index = stol(point_tokens.at(POINT_ID));
+		this_emp.a = stod(point_tokens.at(POINT_X));
+		this_emp.b = stod(point_tokens.at(POINT_Y));
+		this_emp.radius = stod(point_tokens.at(POINT_RADIUS));
+
+		emp_vector[this_emp.index] = this_emp;
+	}
+
+	return emp_vector;
 }
