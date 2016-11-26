@@ -21,6 +21,8 @@ public:
 
 	static Config createConfigFromFile(char* filename);
 	static std::vector<Point*> getMovingPointsFromFile(char* filename);
-	static ENCODED_MOVING_POINT* getEncodeMovingPointsFromFile(char* filename);
+	static ENCODED_MOVING_POINT* getEncodeMovingPointsFromFile(char* filename, int number_of_points);
+	static void MPI_Custom_send_config(Config cfg, int to);
+	static Config MPI_Custom_recv_config(int from);
 };
 
