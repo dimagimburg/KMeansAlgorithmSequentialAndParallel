@@ -18,6 +18,7 @@ using namespace std;
 // 2. make sure you get all data needed via mpi , and all data is decoded at the end points.
 // 3. parallelize the point movment with cuda, all points positions are calculated at once (this is the first parallelizing action).
 // 4. make KMEANS alg' parallelized too.
+// 5. check on big amount of data, can we send 250k points via one mpi call or we need some sort of split.
 
 int main(int argc, char *argv[])
 {
@@ -26,45 +27,20 @@ int main(int argc, char *argv[])
 	char			processor_name[MPI_MAX_PROCESSOR_NAME];
 	MPI_Comm		comm;
 	MPI_Status		status;
-	// setup of ENCODED_MOVING_POINT struct to send 
-	MPI_Datatype	MPI_CUSTOM_ENCODED_MOVING_POINT, oldtypes[2];
-	MPI_Aint		offsets[2], extent;
-	int				blockcounts[2];
+
+	// init of datatype for ENCODED_MOVING_POINT struct to send 
+	MPI_Datatype	MPI_CUSTOM_ENCODED_MOVING_POINT;
 
 	// MPI init functions
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 	MPI_Get_processor_name(processor_name, &namelen);
-
-	/* ENCODED_MOVING_POINT struct
-		typedef struct encoded_moving_point {
-			long index;
-			double a;
-			double b;
-			double radius;
-		} ENCODED_MOVING_POINT;
-	*/
-	// setup description of ENCODED_MOVING_POINT struct
-	// first setup of 1 MPI_LONG - index
-	offsets[0]		=	0;
-	oldtypes[0]		=	MPI_LONG;
-	blockcounts[0]	=	1;
-
-	// setup description of the 3 MPI_DOUBLE a, b, radius
-	// need to first figure offset by getting size of MPI_FLOAT
-	MPI_Type_extent(MPI_LONG, &extent);
-
-	offsets[1]		=	1 * extent;
-	oldtypes[1]		=	MPI_DOUBLE;
-	blockcounts[1]	=	3;
-
-	// define structured type and commit it
-	MPI_Type_struct(2, blockcounts, offsets, oldtypes, &MPI_CUSTOM_ENCODED_MOVING_POINT);
-	MPI_Type_commit(&MPI_CUSTOM_ENCODED_MOVING_POINT);
+	Utils::MPI_Custom_create_moving_point_datatype(&MPI_CUSTOM_ENCODED_MOVING_POINT); // prepare the moving point datatype to send over mpi
 
 	// -------------------------------------------------------------------------
 	
+	// ----------------------- stage 2: send and receive -----------------------
 	if (myid == MASTER_ID){
 		cout << "[Master start] id=[" << myid << "]" << endl;
 		Config cfg = Utils::createConfigFromFile(INPUT_FILE_PATH);
@@ -77,28 +53,42 @@ int main(int argc, char *argv[])
 		ENCODED_MOVING_POINT* points_encoded;
 		points_encoded = Utils::getEncodeMovingPointsFromFile(INPUT_FILE_PATH, cfg.getTotalPoints());
 		Utils::MPI_Custom_send_config(cfg, 1);
-		//MPI_Send(&points_encoded, cfg.getTotalPoints(), MPI_CUSTOM_ENCODED_MOVING_POINT, 1, TAG, MPI_COMM_WORLD);
+
+
+		// =============================================== test - send 1 point ===============================================
+		ENCODED_MOVING_POINT p;
+		p.index = 999;
+		p.a = 666;
+		p.b = 777;
+		p.radius = 888;
+		MPI_Send(&p, 1, MPI_CUSTOM_ENCODED_MOVING_POINT, 1, TAG, MPI_COMM_WORLD);
+		cout << "master: " << p.index << " " << p.a << " " << p.b << " " << p.radius << endl;
+		// =============================================== test - send 1 point =============================================== 
+
+	
 		cout << "[Master end] id=[" << myid << "]" << endl;
 	}
 	else {
 		cout << "[Slave start] id=[" << myid << "]" << endl;
 		MPI_Status status;
-		ENCODED_MOVING_POINT* received;
-
 		Config cfg = Utils::MPI_Custom_recv_config(MASTER_ID);
 
-		cout << cfg.getTotalPoints() << endl;
-		cout << cfg.getNumberOfClusters() << endl;
-		cout << cfg.getDeltaT() << endl;
-		cout << cfg.getTime() << endl;
-		cout << cfg.getLimit() << endl;
+
+		// =============================================== test - send 1 point =============================================== 
+		ENCODED_MOVING_POINT p;
+		MPI_Recv(&p, 1, MPI_CUSTOM_ENCODED_MOVING_POINT, MASTER_ID, TAG, MPI_COMM_WORLD, &status);
+		cout << "slave: " << p.index << " " << p.a << " " << p.b << " " << p.radius << endl;
+		// =============================================== test - send 1 point =============================================== 
+
 
 		cout << "[Slave end] id=[" << myid << "]" << endl;
+		//free(received);
 	}
 	
-	// stage 2: send and receive
+	
 
-	// stage 5? final: close files, free resources, destruct objects
+	// ---------------------- stage 5? final: close files, free resources, destruct objects ---------------------
+	MPI_Type_free(&MPI_CUSTOM_ENCODED_MOVING_POINT);
 	MPI_Finalize();
 	cout << "END" << endl;
 	return 0;

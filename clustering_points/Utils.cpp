@@ -90,6 +90,30 @@ ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(char* filename, int n
 	return emp_vector;
 }
 
+void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype *MPI_CUSTOM_DATATYPE){
+	// based on answer (http://stackoverflow.com/a/20709889/2698072)
+
+	int	number_of_blocks = MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS;
+	int	blocks[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = { 1, 1, 1, 1 };
+
+	MPI_Datatype types[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = {    /* pixel internal types */
+		MPI_LONG,
+		MPI_DOUBLE,
+		MPI_DOUBLE,
+		MPI_DOUBLE
+	};
+
+	MPI_Aint dis[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = {          /* internal displacements */
+		offsetof(ENCODED_MOVING_POINT, index),
+		offsetof(ENCODED_MOVING_POINT, a),
+		offsetof(ENCODED_MOVING_POINT, b),
+		offsetof(ENCODED_MOVING_POINT, radius)
+	};
+
+	MPI_Type_create_struct(number_of_blocks, blocks, dis, types, MPI_CUSTOM_DATATYPE);
+	MPI_Type_commit(MPI_CUSTOM_DATATYPE);
+}
+
 void Utils::MPI_Custom_send_config(Config cfg, int to){
 	long number_of_points = cfg.getTotalPoints();
 	long number_of_clusters = cfg.getNumberOfClusters();
