@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <mpi.h>
 #include "Config.h"
 #include "Point.h"
 #include "MovingPoint.h"
@@ -18,8 +19,8 @@ public:
 	Utils();
 	~Utils();
 
-	static Config createConfigFromFile(std::string filename);
-	static std::vector<Point*> getMovingPointsFromFile(std::string filename);
-	static ENCODED_MOVING_POINT* getEncodeMovingPointsFromFile(std::string filename);
+	static Config createConfigFromFile(char* filename);
+	static std::vector<Point*> getMovingPointsFromFile(char* filename);
+	static ENCODED_MOVING_POINT* getEncodeMovingPointsFromFile(char* filename);
 };
 

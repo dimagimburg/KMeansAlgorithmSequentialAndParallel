@@ -18,66 +18,53 @@ Utils::~Utils()
 {
 }
 
-Config Utils::createConfigFromFile(std::string filename){
-	enum {
-		TOTAL_POINTS_POS,
-		N_CLUSTERS_POS,
-		DELTA_T_POS,
-		TIME_POS,
-		LIMIT_POS
-	};
+Config Utils::createConfigFromFile(char* filename){
+	int total_points = 0;
+	int n_clusters = 0;
+	double delta_t = 0;
+	double time = 0;
+	int limit = 0;
 
-	// store first config line string into config_line
-	ifstream file(filename);
-	string config_line;
-	getline(file, config_line);
-
-	// set the config tokens one by one into a vector
-	vector<string> config_tokens;
-	istringstream iss(config_line);
-	copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(config_tokens));
-
-	int total_points = stoi(config_tokens.at(TOTAL_POINTS_POS));
-	int n_clusters = stoi(config_tokens.at(N_CLUSTERS_POS));
-	double delta_t = stod(config_tokens.at(DELTA_T_POS));
-	double time = stod(config_tokens.at(TIME_POS));
-	int limit = stoi(config_tokens.at(LIMIT_POS));
+	FILE* f;
+	errno_t errorCode = fopen_s(&f, filename, "r");
+	if (errorCode != 0)
+	{
+		printf("Error opening file!\n");
+		exit(1);
+	}
+	int row = fscanf_s(f, "%d %d %lf %lf %d", &total_points, &n_clusters, &delta_t, &time, &limit);
+	fclose(f);
 
 	return Config(total_points, n_clusters, delta_t, time, limit);
 }
 
-vector<Point*> Utils::getMovingPointsFromFile(std::string filename){
-	enum {
-		POINT_ID,
-		POINT_X,
-		POINT_Y,
-		POINT_RADIUS
-	};
-	double x, y, r;
-
+vector<Point*> Utils::getMovingPointsFromFile(char* filename){
+	double x = 0.0, y = 0.0, r = 0.0;
+	int index = 0;
 	vector<Point*> points;
+	FILE* f;
 
-	ifstream file(filename);
-	string point_line;
+	errno_t errorCode = fopen_s(&f, filename, "r");
+	if (errorCode != 0)
+	{
+		printf("Error opening file!\n");
+		exit(1);
+	}
+	// first line is config line - ignore (http://stackoverflow.com/a/16108311/2698072)
+	int row = fscanf_s(f, "%*[^\n]\n", NULL); 
 
-	getline(file, point_line); // first line is for config
-
-	while (getline(file, point_line)){
-		vector<string> point_tokens;
-		istringstream iss(point_line);
-		copy(istream_iterator<string>(iss), istream_iterator<string>(), back_inserter(point_tokens));
-
-		x = stod(point_tokens.at(POINT_X));
-		y = stod(point_tokens.at(POINT_Y));
-		r = stod(point_tokens.at(POINT_RADIUS));
-
+	// fscanf_s(f, "%d %lf %lf %lf\n", &index, &x, &y, &r) != EOF) read the last line twice (http://stackoverflow.com/a/26570818/2698072)
+	// == 4 is the number of the parameters we read from line.
+	while (fscanf_s(f, "%d %lf %lf %lf\n", &index, &x, &y, &r) == 4) { 
 		points.push_back(new MovingPoint(x, y, r));
 	}
+
+	fclose(f);
 
 	return points;
 }
 
-ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(std::string filename){
+ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(char* filename){
 	enum {
 		POINT_ID,
 		POINT_X,
