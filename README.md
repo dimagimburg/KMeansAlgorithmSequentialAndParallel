@@ -25,3 +25,10 @@ input is delivered from file looks like:
 
 **line 2 - line N:** point_index x y radius
 
+## Tests:
+### Test 1:
+first test was made on 14 points as in the image below:
+
+![Point p moves](https://raw.githubusercontent.com/dimagimburg/KMeansAlgorithmSequentialAndParallel/master/input_test_1.png)
+
+points were chosen to get 3 very strong and easy visible clusters.
