@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	MPI_Comm		comm;
 	MPI_Status		status;
 
-	// init of datatype for ENCODED_MOVING_POINT struct to send 
+	// init of custom datatype for ENCODED_MOVING_POINT struct to send 
 	MPI_Datatype	MPI_CUSTOM_ENCODED_MOVING_POINT;
 
 	// MPI init functions
@@ -56,14 +56,9 @@ int main(int argc, char *argv[])
 
 
 		// =============================================== test - send 1 point ===============================================
-		ENCODED_MOVING_POINT p;
-		p.index = 999;
-		p.a = 666;
-		p.b = 777;
-		p.radius = 888;
-		MPI_Send(&p, 1, MPI_CUSTOM_ENCODED_MOVING_POINT, 1, TAG, MPI_COMM_WORLD);
-		cout << "master: " << p.index << " " << p.a << " " << p.b << " " << p.radius << endl;
-		// =============================================== test - send 1 point =============================================== 
+		MPI_Send(&points_encoded, cfg.getTotalPoints(), MPI_CUSTOM_ENCODED_MOVING_POINT, 1, TAG, MPI_COMM_WORLD);
+		cout << "MASTER: sent " << cfg.getTotalPoints() << " points" << endl;
+		// =============================================== test - send array of points =============================================== 
 
 	
 		cout << "[Master end] id=[" << myid << "]" << endl;
@@ -74,11 +69,11 @@ int main(int argc, char *argv[])
 		Config cfg = Utils::MPI_Custom_recv_config(MASTER_ID);
 
 
-		// =============================================== test - send 1 point =============================================== 
-		ENCODED_MOVING_POINT p;
-		MPI_Recv(&p, 1, MPI_CUSTOM_ENCODED_MOVING_POINT, MASTER_ID, TAG, MPI_COMM_WORLD, &status);
-		cout << "slave: " << p.index << " " << p.a << " " << p.b << " " << p.radius << endl;
-		// =============================================== test - send 1 point =============================================== 
+		// =============================================== test - send array of points =============================================== 
+		ENCODED_MOVING_POINT* points_encoded_received = (ENCODED_MOVING_POINT*) malloc(cfg.getTotalPoints() * sizeof(ENCODED_MOVING_POINT));
+		MPI_Recv(&points_encoded_received, cfg.getTotalPoints(), MPI_CUSTOM_ENCODED_MOVING_POINT, MASTER_ID, TAG, MPI_COMM_WORLD, &status);
+		cout << "SLAVE: received " << cfg.getTotalPoints() << " points" << endl;
+		// =============================================== test - send array of points =============================================== 
 
 
 		cout << "[Slave end] id=[" << myid << "]" << endl;
