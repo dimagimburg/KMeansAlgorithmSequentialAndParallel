@@ -25,6 +25,9 @@ input is delivered from file looks like:
 
 **line 2 - line N:** point_index x y radius
 
+## Implementation:
+1. For one instance of machine you can use Utils::getMovingPointsFromFile to get the vector of the points immediately, but for the MPI communication I had to first encode the points into an array struct [ENCODED_MOVING_POINT*] and the decode it on the receiver end.
+
 ## Tests:
 ### Test 1:
 first test was made on 14 points as in the image below:

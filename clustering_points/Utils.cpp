@@ -16,12 +16,19 @@ Utils::Utils()
 {
 }
 
-
 Utils::~Utils()
 {
 }
 
 Config Utils::createConfigFromFile(char* filename){
+
+	/**
+	Creates a Config object out of input text file
+
+	@param [char* filename] - file name string
+	@return [Config] initialized with data from file
+	*/
+
 	int total_points = 0;
 	int n_clusters = 0;
 	double delta_t = 0;
@@ -42,6 +49,14 @@ Config Utils::createConfigFromFile(char* filename){
 }
 
 vector<Point*> Utils::getMovingPointsFromFile(char* filename){
+
+	/**
+	Creates the moving points vector out of input text file with points
+
+	@param [char* filename] - file name string
+	@return [vector<Point*>] - a vector filled with the moving points from the input file.
+	*/
+
 	double x = 0.0, y = 0.0, r = 0.0;
 	int index = 0;
 	vector<Point*> points;
@@ -54,7 +69,7 @@ vector<Point*> Utils::getMovingPointsFromFile(char* filename){
 		exit(0);
 	}
 
-	// first line is config line - ignore (http://stackoverflow.com/a/16108311/2698072)
+	// skip first line is config line (http://stackoverflow.com/a/16108311/2698072)
 	int row = fscanf(f, "%*[^\n]\n", NULL); 
 
 	while (fscanf(f, "%d %lf %lf %lf\n", &index, &x, &y, &r) != EOF) { 
@@ -67,6 +82,14 @@ vector<Point*> Utils::getMovingPointsFromFile(char* filename){
 }
 
 ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(char* filename, int number_of_points){
+
+	/**
+	Creates an array of ENCODED_MOVING_POINT from the input file
+
+	@param [char* filename] - file name string
+	@return [ENCODED_MOVING_POINT*] - an array of ENCODED_MOVING_POINT filled with the moving points from the input file.
+	*/
+
 	double x = 0.0, y = 0.0, r = 0.0;
 	int index = 0;
 	FILE* f;
@@ -90,7 +113,14 @@ ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(char* filename, int n
 	return emp_vector;
 }
 
-void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype *MPI_CUSTOM_DATATYPE){
+void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype* MPI_CUSTOM_DATATYPE){
+	/**
+	Creates a new custom datatype for the encoded moving points
+
+	@param [MPI_Datatype* MPI_CUSTOM_DATATYPE] - reference for the MPI_Datatype object
+	@return [void]
+	*/
+
 	// based on answer (http://stackoverflow.com/a/20709889/2698072)
 
 	int	number_of_blocks = MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS;
@@ -115,6 +145,14 @@ void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype *MPI_CUSTOM_DAT
 }
 
 void Utils::MPI_Custom_send_config(Config cfg, int to){
+	/**
+	Using MPI_Send to send the config from master to slave
+
+	@param [Config cfg] - config object to send
+	@param [int to] - destenation process id
+	@return [void]
+	*/
+
 	long number_of_points = cfg.getTotalPoints();
 	long number_of_clusters = cfg.getNumberOfClusters();
 	double delta_t = cfg.getDeltaT();
