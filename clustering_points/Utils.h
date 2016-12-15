@@ -25,6 +25,7 @@ public:
 	static ENCODED_MOVING_POINT* getEncodeMovingPointsFromFile(char* filename, int number_of_points);
 	static void MPI_Custom_create_moving_point_datatype(MPI_Datatype *MPI_CUSTOM_DATATYPE);
 	static void MPI_Custom_send_config(Config cfg, int to);
+	static void MPI_Custom_master_broadcast_config(Config* cfg, int myid);
 	static Config MPI_Custom_recv_config(int from);
 };
 

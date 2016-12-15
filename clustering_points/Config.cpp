@@ -6,8 +6,14 @@ Config::Config(int total_points, int n_clusters, double delta_t, double time, in
 	delta_t(delta_t), 
 	time(time),
 	limit(limit)
-{
+{}
 
+Config::Config(){
+	this->setTotalPoints(0);
+	this->setNumberOfClusters(0);
+	this->setDeltaT(0);
+	this->setTime(0);
+	this->setLimit(0);
 }
 
 Config::~Config(){};

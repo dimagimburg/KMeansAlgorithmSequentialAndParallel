@@ -19,12 +19,15 @@ using namespace std;
 // 3. parallelize the point movment with cuda, all points positions are calculated at once (this is the first parallelizing action).
 // 4. make KMEANS alg' parallelized too.
 // 5. check on big amount of data, can we send 250k points via one mpi call or we need some sort of split.
+// 6. error handling for some cases (number of processes is under 2, etc)
+// 7. move constants into a global location so we wont need to duplicate declarations and defines
 
 int main(int argc, char *argv[])
 {
-	// ------------------------ stage 1: initialization ------------------------
+	// ======================= stage 1: initialization =======================
 	int				myid, numprocs, namelen;
 	char			processor_name[MPI_MAX_PROCESSOR_NAME];
+	Config			cfg;
 	MPI_Comm		comm;
 	MPI_Status		status;
 
@@ -40,21 +43,24 @@ int main(int argc, char *argv[])
 
 	// -------------------------------------------------------------------------
 	
-	// ----------------------- stage 2: send and receive -----------------------
+	// ======================= stage 2: send and receive =======================
+	// 2.1 - initialize config and broadcast it to all processes
 	if (myid == MASTER_ID){
-		cout << "[Master start] id=[" << myid << "]" << endl;
-		Config cfg = Utils::createConfigFromFile(INPUT_FILE_PATH);
+		cfg = Utils::createConfigFromFile(INPUT_FILE_PATH);
+	}
+	Utils::MPI_Custom_master_broadcast_config(&cfg, myid);
 
+	// 2.2 - send all data needed to all processes
+	if (myid == MASTER_ID){
 		/* 
 			had to first encode points into a struct so that myid = 0 
-			could send it to other processes as serialized data 
+			could send it to other processes as serialized data.
+			Readme file, Implementation, point 1.
 		*/
 
 		ENCODED_MOVING_POINT* points_encoded;
 		points_encoded = Utils::getEncodeMovingPointsFromFile(INPUT_FILE_PATH, cfg.getTotalPoints());
-		Utils::MPI_Custom_send_config(cfg, 1);
-
-
+		
 		// =============================================== test - send 1 point ===============================================
 		MPI_Send(&points_encoded, cfg.getTotalPoints(), MPI_CUSTOM_ENCODED_MOVING_POINT, 1, TAG, MPI_COMM_WORLD);
 		cout << "MASTER: sent " << cfg.getTotalPoints() << " points" << endl;
@@ -65,9 +71,9 @@ int main(int argc, char *argv[])
 	}
 	else {
 		cout << "[Slave start] id=[" << myid << "]" << endl;
+		cout << "[Slave] config.total_points=[" << cfg.getTotalPoints() << "]" << endl;
 		MPI_Status status;
-		Config cfg = Utils::MPI_Custom_recv_config(MASTER_ID);
-
+		//Config cfg = Utils::MPI_Custom_recv_config(MASTER_ID);
 
 		// =============================================== test - send array of points =============================================== 
 		ENCODED_MOVING_POINT* points_encoded_received = (ENCODED_MOVING_POINT*) malloc(cfg.getTotalPoints() * sizeof(ENCODED_MOVING_POINT));
@@ -82,7 +88,7 @@ int main(int argc, char *argv[])
 	
 	
 
-	// ---------------------- stage 5? final: close files, free resources, destruct objects ---------------------
+	// ======================= stage 5? final: close files, free resources, destruct objects =======================
 	MPI_Type_free(&MPI_CUSTOM_ENCODED_MOVING_POINT);
 	MPI_Finalize();
 	cout << "END" << endl;

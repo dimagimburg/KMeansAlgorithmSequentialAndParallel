@@ -11,6 +11,7 @@ private:
 	int limit;
 
 public:
+	Config();
 	Config(int total_points, int n_clusters, double delta_t, double time, int limit);
 	~Config();
 

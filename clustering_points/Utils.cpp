@@ -11,6 +11,7 @@ using namespace std;
 
 #pragma warning(disable:4996)
 #define TAG 0
+#define MASTER_ID 0
 
 Utils::Utils()
 {
@@ -21,7 +22,6 @@ Utils::~Utils()
 }
 
 Config Utils::createConfigFromFile(char* filename){
-
 	/**
 	Creates a Config object out of input text file
 
@@ -49,7 +49,6 @@ Config Utils::createConfigFromFile(char* filename){
 }
 
 vector<Point*> Utils::getMovingPointsFromFile(char* filename){
-
 	/**
 	Creates the moving points vector out of input text file with points
 
@@ -82,7 +81,6 @@ vector<Point*> Utils::getMovingPointsFromFile(char* filename){
 }
 
 ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(char* filename, int number_of_points){
-
 	/**
 	Creates an array of ENCODED_MOVING_POINT from the input file
 
@@ -166,7 +164,54 @@ void Utils::MPI_Custom_send_config(Config cfg, int to){
 	MPI_Send(&limit, 1, MPI_LONG, 1, TAG, MPI_COMM_WORLD);
 }
 
+void Utils::MPI_Custom_master_broadcast_config(Config* cfg, int myid){
+	/**
+	Using MPI_Bcast to broadcast the config from master to all slaves
+
+	@param [Config cfg] - config object to send
+	@return [void]
+	*/
+
+	long number_of_points, number_of_clusters, limit;
+	double delta_t, time;
+
+	if (myid == MASTER_ID){
+		number_of_points = cfg->getTotalPoints();
+		number_of_clusters = cfg->getNumberOfClusters();
+		delta_t = cfg->getDeltaT();
+		time = cfg->getTime();
+		limit = cfg->getLimit();
+	}
+
+	MPI_Bcast(&number_of_points, 1, MPI_LONG, 0, MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Bcast(&number_of_clusters, 1, MPI_LONG, 0, MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Bcast(&delta_t, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Bcast(&time, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Bcast(&limit, 1, MPI_LONG, 0, MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
+
+	if (myid != MASTER_ID){
+		cfg->setTotalPoints(number_of_points);
+		cfg->setNumberOfClusters(number_of_clusters);
+		cfg->setDeltaT(delta_t);
+		cfg->setTime(time);
+		cfg->setLimit(limit);
+	}
+}
+
 Config Utils::MPI_Custom_recv_config(int from){
+
+	/**
+	Using MPI_Send to receive the config from master
+
+	@param [int from] - master id
+	@return [Config] - Config object created from data received
+	*/
+
 	MPI_Status status;
 	long number_of_points = 0;
 	long number_of_clusters = 0;
