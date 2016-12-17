@@ -80,7 +80,7 @@ vector<Point*> Utils::getMovingPointsFromFile(char* filename){
 	return points;
 }
 
-ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(char* filename, int number_of_points){
+void Utils::getEncodeMovingPointsFromFile(ENCODED_MOVING_POINT* &emp, char* filename, int number_of_points){
 	/**
 	Creates an array of ENCODED_MOVING_POINT from the input file
 
@@ -88,27 +88,25 @@ ENCODED_MOVING_POINT* Utils::getEncodeMovingPointsFromFile(char* filename, int n
 	@return [ENCODED_MOVING_POINT*] - an array of ENCODED_MOVING_POINT filled with the moving points from the input file.
 	*/
 
-	double x = 0.0, y = 0.0, r = 0.0;
-	int index = 0;
+	double a, b, radius;
+	int index;
 	FILE* f;
-	ENCODED_MOVING_POINT* emp_vector = (ENCODED_MOVING_POINT*)malloc(number_of_points * sizeof(ENCODED_MOVING_POINT));
+	emp = (ENCODED_MOVING_POINT*)malloc(number_of_points * sizeof(ENCODED_MOVING_POINT));
 
 	f = fopen(filename, "r");
 
 	// first line is config line - ignore (http://stackoverflow.com/a/16108311/2698072)
-	int row = fscanf(f, "%*[^\n]\n", NULL);
+	int row = fscanf_s(f, "%*[^\n]\n", NULL);
 
-	while (fscanf(f, "%d %lf %lf %lf\n", &index, &x, &y, &r) != EOF) {
-		ENCODED_MOVING_POINT this_emp;
-		this_emp.index = index;
-		this_emp.a = x;
-		this_emp.b = y;
-		this_emp.radius = r;
-
-		emp_vector[this_emp.index] = this_emp;
+	while (row != EOF) {
+		row = fscanf_s(f, "%d %lf %lf %lf\n", &index, &a, &b, &radius);
+		emp[index].index = index;
+		emp[index].a = a;
+		emp[index].b = b;
+		emp[index].radius = radius;
 	}
 
-	return emp_vector;
+	fclose(f);
 }
 
 void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype* MPI_CUSTOM_DATATYPE){
@@ -121,11 +119,11 @@ void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype* MPI_CUSTOM_DAT
 
 	// based on answer (http://stackoverflow.com/a/20709889/2698072)
 
-	int	number_of_blocks = MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS;
+	ENCODED_MOVING_POINT point;
 	int	blocks[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = { 1, 1, 1, 1 };
 
-	MPI_Datatype types[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = {    /* pixel internal types */
-		MPI_LONG,
+	MPI_Datatype types[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = {    /* moving point internal types */
+		MPI_INT,
 		MPI_DOUBLE,
 		MPI_DOUBLE,
 		MPI_DOUBLE
@@ -138,7 +136,7 @@ void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype* MPI_CUSTOM_DAT
 		offsetof(ENCODED_MOVING_POINT, radius)
 	};
 
-	MPI_Type_create_struct(number_of_blocks, blocks, dis, types, MPI_CUSTOM_DATATYPE);
+	MPI_Type_create_struct(MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS, blocks, dis, types, MPI_CUSTOM_DATATYPE);
 	MPI_Type_commit(MPI_CUSTOM_DATATYPE);
 }
 
@@ -183,16 +181,11 @@ void Utils::MPI_Custom_master_broadcast_config(Config* cfg, int myid){
 		limit = cfg->getLimit();
 	}
 
-	MPI_Bcast(&number_of_points, 1, MPI_LONG, 0, MPI_COMM_WORLD);
-	MPI_Barrier(MPI_COMM_WORLD);
-	MPI_Bcast(&number_of_clusters, 1, MPI_LONG, 0, MPI_COMM_WORLD);
-	MPI_Barrier(MPI_COMM_WORLD);
-	MPI_Bcast(&delta_t, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-	MPI_Barrier(MPI_COMM_WORLD);
-	MPI_Bcast(&time, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-	MPI_Barrier(MPI_COMM_WORLD);
-	MPI_Bcast(&limit, 1, MPI_LONG, 0, MPI_COMM_WORLD);
-	MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Bcast(&number_of_points, 1, MPI_LONG, MASTER_ID, MPI_COMM_WORLD);
+	MPI_Bcast(&number_of_clusters, 1, MPI_LONG, MASTER_ID, MPI_COMM_WORLD);
+	MPI_Bcast(&delta_t, 1, MPI_DOUBLE, MASTER_ID, MPI_COMM_WORLD);
+	MPI_Bcast(&time, 1, MPI_DOUBLE, MASTER_ID, MPI_COMM_WORLD);
+	MPI_Bcast(&limit, 1, MPI_LONG, MASTER_ID, MPI_COMM_WORLD);
 
 	if (myid != MASTER_ID){
 		cfg->setTotalPoints(number_of_points);
@@ -204,7 +197,6 @@ void Utils::MPI_Custom_master_broadcast_config(Config* cfg, int myid){
 }
 
 Config Utils::MPI_Custom_recv_config(int from){
-
 	/**
 	Using MPI_Send to receive the config from master
 
@@ -226,4 +218,19 @@ Config Utils::MPI_Custom_recv_config(int from){
 	MPI_Recv(&limit, 1, MPI_LONG, 0, TAG, MPI_COMM_WORLD, &status);
 
 	return Config(number_of_points, number_of_clusters, delta_t, time, limit);
+}
+
+void Utils::printEncodedMovingPoints(string prefix, ENCODED_MOVING_POINT* points, int numberOfPoints){
+	/**
+	prints the encoded moving points array
+
+	@param [string prefix] - prefix for printing (master/slave)
+	@param [ENCODED_MOVING_POINT* points] - moving points array
+	@param [int numberOfPoints] - number of moving points
+	@return [void]
+	*/
+
+	for (int i = 0; i < numberOfPoints; i++){
+		cout << prefix << "index=[" << points[i].index << "], a=[" << points[i].a << "], b=[" << points[i].index << "], radius=[" << points[i].radius << "]" << endl;
+	}
 }
