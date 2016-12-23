@@ -162,6 +162,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Config.h" />
     <ClInclude Include="EncodedMovingPoint.h" />
     <ClInclude Include="MovingPoint.h" />
+    <ClInclude Include="ParallelKMeans.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="SequentialKMeans.h" />
     <ClInclude Include="Utils.h" />
@@ -171,6 +172,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovingPoint.cpp" />
+    <ClCompile Include="ParallelKMeans.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="SequentialKMeans.cpp" />
     <ClCompile Include="Utils.cpp" />

@@ -27,6 +27,7 @@ input is delivered from file looks like:
 
 ## Implementation:
 1. For one instance of machine you can use Utils::getMovingPointsFromFile to get the vector of the points immediately, but for the MPI communication I had to first encode the points into a struct array of `ENCODED_MOVING_POINT*` and than decode it on the receiver end.
+2. `vector<vector<Cluster*>> vector_of_time_intervals` - is a vector of vector of clusters, each process going to be in charge of certain amount of time intervals, each interval should do calculation to find the clusters.
 
 ## Tests:
 ### Test 1:

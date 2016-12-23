@@ -5,7 +5,7 @@
 #include "Cluster.h"
 #include "Config.h"
 #include "Utils.h"
-#include "SequentialKMeans.h"
+#include "ParallelKMeans.h"
 
 #define INPUT_FILE_PATH "C:\\tmp\\input.txt"
 #define MASTER_ID 0
@@ -23,20 +23,26 @@ using namespace std;
 // 7. move constants into a global location so we wont need to duplicate declarations and defines
 // 8. check if scattering will help to make the sending of the points more efficient
 // 9. change INPUT_FILE_PATH to something more generic
+// 10. code conventions, camel case or underscored variables and functions
+// 11. code conventions, each variable procces related will start with the prefix my_
+// 12. common language, iteration - in the context of delta_t time interval
 
 int main(int argc, char *argv[])
 {
 	// ======================= stage 1: initialization =======================
-	int						myid, numprocs, namelen;
-	char					processor_name[MPI_MAX_PROCESSOR_NAME];
-	vector<Point*>			points;
-	Config					cfg;
-	ENCODED_MOVING_POINT*	points_encoded;
-	MPI_Comm				comm;
-	MPI_Status				status;
+	int								myid, numprocs, namelen;
+	double							my_start_time, my_end_time;
+	char							processor_name[MPI_MAX_PROCESSOR_NAME];
+	vector<Point*>					points;
+	map<double, vector<Cluster*>>	vector_of_time_intervals; // see readme file, Implementation, point 2
+	Config							cfg;
+	ENCODED_MOVING_POINT*			points_encoded;
+	ParallelKMeans*					parallel_kmeans;
+	MPI_Comm						comm;
+	MPI_Status						status;
 
 	// init of custom datatype for ENCODED_MOVING_POINT struct to send 
-	MPI_Datatype			MPI_CUSTOM_ENCODED_MOVING_POINT;
+	MPI_Datatype					MPI_CUSTOM_ENCODED_MOVING_POINT;
 
 	// MPI init functions
 	MPI_Init(&argc, &argv);
@@ -72,16 +78,16 @@ int main(int argc, char *argv[])
 	// 2.3 decode points into vectors
 	Utils::decodeMovingPointsToVector(points_encoded, cfg.getTotalPoints(), points);
 
-	if (myid == MASTER_ID){
-		Utils::printEncodedMovingPoints("MASTER -> ", points_encoded, cfg.getTotalPoints());
-	}
-	else {
-		Utils::printEncodedMovingPoints("SALVE -> ", points_encoded, cfg.getTotalPoints());
-	}
+	// ======================= stage 3: execute algorithm =======================
+	// 3.1 - calculate the time intervals range which each proccess is in charge of
+	my_start_time	= myid * (cfg.getTime() / numprocs);
+	my_end_time		= (myid + 1) * (cfg.getTime() / numprocs);
 
-	cout << myid << " :: " << *(points.at(0)) << endl;
-	
+	// 3.2 - initialize parallel algorithm helper class
+	parallel_kmeans = new ParallelKMeans(myid, cfg, &points, my_start_time, my_end_time);
 
+	// 3.3 - get clusters for each time interval in the time range per proccess
+	parallel_kmeans->get_clusters_for_all_intervals(vector_of_time_intervals);
 	// ======================= stage 5? final: close files, free resources, destruct objects =======================
 	//free(points_encoded);
 	MPI_Type_free(&MPI_CUSTOM_ENCODED_MOVING_POINT);

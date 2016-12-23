@@ -28,6 +28,9 @@
     <ClInclude Include="EncodedMovingPoint.h">
       <Filter>Models\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="ParallelKMeans.h">
+      <Filter>Alg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -47,6 +50,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="SequentialKMeans.cpp">
+      <Filter>Alg</Filter>
+    </ClCompile>
+    <ClCompile Include="ParallelKMeans.cpp">
       <Filter>Alg</Filter>
     </ClCompile>
   </ItemGroup>
