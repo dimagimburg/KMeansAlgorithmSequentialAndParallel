@@ -160,6 +160,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Cluster.h" />
     <ClInclude Include="Clusterable.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="EncodedMovingPoint.h" />
     <ClInclude Include="MovingPoint.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="SequentialKMeans.h" />

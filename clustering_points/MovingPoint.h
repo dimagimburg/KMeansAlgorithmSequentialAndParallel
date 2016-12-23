@@ -1,6 +1,8 @@
 #pragma once
 #include "Point.h"
+#include "EncodedMovingPoint.h"
 #include <iostream>
+
 using namespace std;
 
 class MovingPoint : public Point
@@ -16,6 +18,7 @@ public:
 	MovingPoint(const Point& point);
 	MovingPoint(const Point& point, double radius);
 	MovingPoint(const MovingPoint& point);
+	MovingPoint(const ENCODED_MOVING_POINT& encoded_moving_point);
 	~MovingPoint();
 
 	double getRadius() const;

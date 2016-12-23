@@ -25,6 +25,9 @@
     <ClInclude Include="SequentialKMeans.h">
       <Filter>Alg</Filter>
     </ClInclude>
+    <ClInclude Include="EncodedMovingPoint.h">
+      <Filter>Models\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

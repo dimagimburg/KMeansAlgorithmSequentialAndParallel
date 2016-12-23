@@ -80,6 +80,13 @@ vector<Point*> Utils::getMovingPointsFromFile(char* filename){
 	return points;
 }
 
+void Utils::decodeMovingPointsToVector(ENCODED_MOVING_POINT* points_encoded, int numberOfPoints, vector<Point*>& points){
+	for (int i = 0; i < numberOfPoints; i++){
+		points.push_back(new MovingPoint(points_encoded[i]));
+	}
+	//clusters.push_back(Cluster((*points).at(i)));
+}
+
 void Utils::getEncodeMovingPointsFromFile(ENCODED_MOVING_POINT* &emp, char* filename, int number_of_points){
 	/**
 	Creates an array of ENCODED_MOVING_POINT from the input file
@@ -119,7 +126,6 @@ void Utils::MPI_Custom_create_moving_point_datatype(MPI_Datatype* MPI_CUSTOM_DAT
 
 	// based on answer (http://stackoverflow.com/a/20709889/2698072)
 
-	ENCODED_MOVING_POINT point;
 	int	blocks[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = { 1, 1, 1, 1 };
 
 	MPI_Datatype types[MOVING_POINT_STRUCT_NUMBER_OF_BLOCKS] = {    /* moving point internal types */

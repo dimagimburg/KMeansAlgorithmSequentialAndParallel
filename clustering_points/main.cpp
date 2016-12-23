@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 	// ======================= stage 1: initialization =======================
 	int						myid, numprocs, namelen;
 	char					processor_name[MPI_MAX_PROCESSOR_NAME];
+	vector<Point*>			points;
 	Config					cfg;
 	ENCODED_MOVING_POINT*	points_encoded;
 	MPI_Comm				comm;
@@ -54,21 +55,23 @@ int main(int argc, char *argv[])
 	Utils::MPI_Custom_master_broadcast_config(&cfg, myid);
 	
 	// 2.2 - send all data needed to all processes
-	if (myid == MASTER_ID){
-		/* 
-			had to first encode points into a struct so that myid = 0 
-			could send it to other processes as serialized data.
-			Readme file, Implementation, point 1.
+	
+	if (myid == MASTER_ID)
+		/*
+		had to first encode points into a struct so that myid = 0
+		could send it to other processes as serialized data.
+		Readme file, Implementation, point 1.
 		*/
 		Utils::getEncodeMovingPointsFromFile(points_encoded, INPUT_FILE_PATH, cfg.getTotalPoints());
-	}
-	else {
+	else
 		// slave allocates the memory for coming points
 		points_encoded = (ENCODED_MOVING_POINT*)malloc(cfg.getTotalPoints() * sizeof(ENCODED_MOVING_POINT));
-	}
-
-	MPI_Bcast(points_encoded, cfg.getTotalPoints(), MPI_CUSTOM_ENCODED_MOVING_POINT, MASTER_ID, MPI_COMM_WORLD);
 	
+	MPI_Bcast(points_encoded, cfg.getTotalPoints(), MPI_CUSTOM_ENCODED_MOVING_POINT, MASTER_ID, MPI_COMM_WORLD);
+
+	// 2.3 decode points into vectors
+	Utils::decodeMovingPointsToVector(points_encoded, cfg.getTotalPoints(), points);
+
 	if (myid == MASTER_ID){
 		Utils::printEncodedMovingPoints("MASTER -> ", points_encoded, cfg.getTotalPoints());
 	}
@@ -76,6 +79,8 @@ int main(int argc, char *argv[])
 		Utils::printEncodedMovingPoints("SALVE -> ", points_encoded, cfg.getTotalPoints());
 	}
 
+	cout << myid << " :: " << *(points.at(0)) << endl;
+	
 
 	// ======================= stage 5? final: close files, free resources, destruct objects =======================
 	//free(points_encoded);

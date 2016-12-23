@@ -21,6 +21,13 @@ MovingPoint::MovingPoint(const MovingPoint& otherMovingPoint) : Point(otherMovin
 	radius = otherMovingPoint.radius;
 }
 
+MovingPoint::MovingPoint(const ENCODED_MOVING_POINT& encoded_moving_point) : 
+id(encoded_moving_point.index), 
+Point(encoded_moving_point.a, encoded_moving_point.b), 
+radius(encoded_moving_point.radius)
+{
+}
+
 MovingPoint::~MovingPoint()
 {
 }
