@@ -20,12 +20,13 @@ using namespace std;
 // 4. make KMEANS alg' parallelized too.
 // 5. check on big amount of data, can we send 250k points via one mpi call or we need some sort of split.
 // 6. error handling for some cases (number of processes is under 2, etc)
-// 7. move constants into a global location so we wont need to duplicate declarations and defines
-// 8. check if scattering will help to make the sending of the points more efficient
-// 9. change INPUT_FILE_PATH to something more generic
-// 10. code conventions, camel case or underscored variables and functions
-// 11. code conventions, each variable procces related will start with the prefix my_
-// 12. common language, iteration - in the context of delta_t time interval
+// 7. try time T and delta_t not pretty dividable (e.g. 2 processes, delta_t = 0.1, T = 150, each process gets 7500 intervals).
+// 8. move constants into a global location so we wont need to duplicate declarations and defines
+// 9. check if scattering will help to make the sending of the points more efficient
+// 10. change INPUT_FILE_PATH to something more generic
+// 11. code conventions, camel case or underscored variables and functions
+// 12. code conventions, each variable procces related will start with the prefix my_
+// 13. common language, iteration - in the context of delta_t time interval
 
 int main(int argc, char *argv[])
 {
@@ -34,7 +35,7 @@ int main(int argc, char *argv[])
 	double							my_start_time, my_end_time;
 	char							processor_name[MPI_MAX_PROCESSOR_NAME];
 	vector<Point*>					points;
-	map<double, vector<Cluster*>>	vector_of_time_intervals; // see readme file, Implementation, point 2
+	map<double, vector<Cluster*>>	map_of_time_intervals; // see readme file, Implementation, point 2
 	Config							cfg;
 	ENCODED_MOVING_POINT*			points_encoded;
 	ParallelKMeans*					parallel_kmeans;
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
 	parallel_kmeans = new ParallelKMeans(myid, cfg, &points, my_start_time, my_end_time);
 
 	// 3.3 - get clusters for each time interval in the time range per proccess
-	parallel_kmeans->get_clusters_for_all_intervals(vector_of_time_intervals);
+	parallel_kmeans->get_clusters_for_all_intervals(map_of_time_intervals);
 	// ======================= stage 5? final: close files, free resources, destruct objects =======================
 	//free(points_encoded);
 	MPI_Type_free(&MPI_CUSTOM_ENCODED_MOVING_POINT);
